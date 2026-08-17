@@ -28,7 +28,7 @@ The purpose of this repository is to document practical SOC analyst work using c
 - [x] Identify repeated authentication failures
 - [x] Document triage and analyst findings
 - [x] Add screenshots and evidence
-- [ ] Create detection logic for repeated failed logins
+- [x] Create and validate detection logic for repeated failed logins
 - [ ] Expand into SIEM monitoring with Splunk or Microsoft Sentinel
 
 ## Repository Structure
@@ -41,7 +41,8 @@ SOC-Analyst-Lab/
 ├── investigations/
 │   └── 001-windows-failed-logins.md
 ├── detections/
-│   └── README.md
+│   ├── README.md
+│   └── 001-repeated-failed-logons.md
 ├── sample-logs/
 │   └── README.md
 └── screenshots/
@@ -56,6 +57,14 @@ SOC-Analyst-Lab/
 The first investigation analyzed five repeated Windows failed-logon events (Event ID **4625**) generated in an authorized local lab. The activity was triaged as **Benign / Authorized Security Test**, with evidence, analyst findings, MITRE ATT&CK mapping, and recommended response actions documented in:
 
 [`investigations/001-windows-failed-logins.md`](investigations/001-windows-failed-logins.md)
+
+## Detection 001 — Repeated Failed Logons
+
+**Status:** Validated — Local Lab
+
+A PowerShell-based threshold detection was validated against the controlled Event ID 4625 dataset. The rule triggered when **5 failed logons occurred within a 2-minute window**.
+
+[`detections/001-repeated-failed-logons.md`](detections/001-repeated-failed-logons.md)
 
 ## Tools
 
