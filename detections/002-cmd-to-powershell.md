@@ -2,7 +2,7 @@
 
 ## Status
 
-**Validated — Splunk Lab**
+**Validated — Splunk Scheduled Alert**
 
 This detection identifies Windows process-creation events where `cmd.exe` is the parent process and `powershell.exe` is the newly created child process.
 
@@ -49,6 +49,42 @@ powershell_from_cmd
 
 The count was greater than one because multiple matching process-creation events were present in the selected five-minute search window. The detection validates the process relationship, not a claim that two malicious executions occurred.
 
+## Splunk Scheduled Alert
+
+The validated search was saved as a scheduled Splunk alert with the following configuration:
+
+| Setting | Value |
+|---|---|
+| Alert name | Command Prompt Spawning PowerShell |
+| Alert type | Scheduled |
+| Search window | Last 5 minutes |
+| Schedule | Every 5 minutes |
+| Trigger condition | Number of Results > 0 |
+| Trigger mode | Once |
+| Throttle | 5 minutes |
+| Severity | Low |
+| Action | Add to Triggered Alerts |
+
+A fresh controlled `cmd.exe → powershell.exe` execution was generated after the alert was enabled. Splunk ingested the corresponding Event ID 4688 telemetry, evaluated the detection, and the alert appeared successfully in **Triggered Alerts** with **Low** severity.
+
+**End-to-end validation:**
+
+```text
+cmd.exe
+   ↓
+powershell.exe
+   ↓
+Windows Event ID 4688
+   ↓
+Splunk ingestion
+   ↓
+SPL parent-child correlation
+   ↓
+Scheduled detection
+   ↓
+Triggered Alert (Low)
+```
+
 ## Triage Guidance
 
 When this process chain appears unexpectedly, review:
@@ -86,4 +122,4 @@ Public documentation should not expose real usernames, hostnames, account domain
 
 ## Next Step
 
-Create a Splunk scheduled alert for the process-chain detection and validate that a fresh controlled `cmd.exe → powershell.exe` execution appears in Triggered Alerts.
+Add sanitized visual evidence for the triggered alert and continue expanding the lab with a third detection focused on a different SOC signal.
