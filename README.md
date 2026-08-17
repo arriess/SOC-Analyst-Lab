@@ -22,12 +22,12 @@ The purpose of this repository is to document practical SOC analyst work using c
 
 ## Lab Roadmap
 
-- [ ] Build Windows security logging lab
-- [ ] Generate controlled failed-login events
-- [ ] Investigate Windows Event ID 4625
-- [ ] Identify repeated authentication failures
-- [ ] Document triage and analyst findings
-- [ ] Add screenshots and evidence
+- [x] Build Windows security logging lab
+- [x] Generate controlled failed-login events
+- [x] Investigate Windows Event ID 4625
+- [x] Identify repeated authentication failures
+- [x] Document triage and analyst findings
+- [x] Add screenshots and evidence
 - [ ] Create detection logic for repeated failed logins
 - [ ] Expand into SIEM monitoring with Splunk or Microsoft Sentinel
 
@@ -45,16 +45,17 @@ SOC-Analyst-Lab/
 ├── sample-logs/
 │   └── README.md
 └── screenshots/
-    └── README.md
+    ├── README.md
+    └── 001-event-4625-overview.jpg
 ```
 
 ## Investigation 001 — Windows Failed Login Analysis
 
-**Status:** Planned / In Progress
+**Status:** Completed — Controlled Lab Simulation
 
-The first investigation will analyze repeated failed authentication events in a controlled Windows lab. The investigation will focus on Windows Security Event ID **4625** and determine whether the activity represents normal user error or suspicious repeated authentication attempts.
+The first investigation analyzed five repeated Windows failed-logon events (Event ID **4625**) generated in an authorized local lab. The activity was triaged as **Benign / Authorized Security Test**, with evidence, analyst findings, MITRE ATT&CK mapping, and recommended response actions documented in:
 
-No investigation result is claimed until the lab has been performed and evidence has been collected.
+[`investigations/001-windows-failed-logins.md`](investigations/001-windows-failed-logins.md)
 
 ## Tools
 
