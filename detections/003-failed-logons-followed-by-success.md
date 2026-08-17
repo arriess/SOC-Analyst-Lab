@@ -77,6 +77,12 @@ The validated query was saved as a Splunk scheduled alert with the following con
 
 A fresh controlled sequence was generated after the alert was enabled. Splunk ingested the corresponding authentication events, evaluated the correlation logic, and the alert appeared successfully in **Triggered Alerts** with **Medium** severity.
 
+## Visual Evidence
+
+The sanitized screenshot below shows Detection 003 appearing in Splunk **Triggered Alerts** with **Medium** severity. The exact trigger timestamp was redacted before publication.
+
+![Detection 003 Splunk Triggered Alert](../screenshots/004-failed-logons-followed-by-success-alert.jpg)
+
 ## End-to-End Validation
 
 ```text
@@ -132,4 +138,4 @@ Public documentation intentionally excludes or redacts real account names, local
 
 ## Next Step
 
-Add sanitized visual evidence for the Triggered Alert and continue expanding the lab with detections focused on different telemetry sources or behaviors.
+Continue expanding the lab with detections focused on different telemetry sources or behaviors.
