@@ -67,6 +67,12 @@ The validated search was saved as a scheduled Splunk alert with the following co
 
 A fresh controlled `cmd.exe → powershell.exe` execution was generated after the alert was enabled. Splunk ingested the corresponding Event ID 4688 telemetry, evaluated the detection, and the alert appeared successfully in **Triggered Alerts** with **Low** severity.
 
+## Visual Evidence
+
+The sanitized screenshot below shows the Detection 002 alert appearing in Splunk **Triggered Alerts** with **Low** severity. The exact trigger timestamp was redacted before publication.
+
+![Detection 002 Splunk Triggered Alert](../screenshots/003-cmd-powershell-triggered-alert.jpg)
+
 **End-to-end validation:**
 
 ```text
@@ -122,4 +128,4 @@ Public documentation should not expose real usernames, hostnames, account domain
 
 ## Next Step
 
-Add sanitized visual evidence for the triggered alert and continue expanding the lab with a third detection focused on a different SOC signal.
+Continue expanding the lab with a third detection focused on a different SOC signal.
