@@ -2,9 +2,9 @@
 
 ## Status
 
-**Testing — Not Yet Validated**
+**Validated — Local Lab**
 
-This detection is based on the completed Windows Event ID 4625 investigation. It will only be marked as validated after the detection logic is executed successfully against lab data.
+This detection was successfully executed against controlled Windows Security log data and triggered when the configured threshold was reached.
 
 ## Detection Objective
 
@@ -30,28 +30,32 @@ WITHIN 2 minutes
 THEN generate alert
 ```
 
-## Local PowerShell Validation
+## Validated PowerShell Logic
 
-The following PowerShell logic checks recent Windows Security logs for any two-minute window containing at least five Event ID 4625 events.
+Run PowerShell with permission to read the Windows Security log.
 
 ```powershell
-$events = Get-WinEvent -FilterHashtable @{
+$events = @(Get-WinEvent -FilterHashtable @{
     LogName='Security'
     Id=4625
     StartTime=(Get-Date).AddHours(-2)
-} | Sort-Object TimeCreated
+} | Sort-Object TimeCreated)
 
 $alertFound = $false
 
 for ($i = 0; $i -lt $events.Count; $i++) {
-    $windowEnd = $events[$i].TimeCreated.AddMinutes(2)
-    $window = $events | Where-Object {
-        $_.TimeCreated -ge $events[$i].TimeCreated -and
-        $_.TimeCreated -le $windowEnd
-    }
+    $windowStart = $events[$i].TimeCreated
+    $windowEnd   = $windowStart.AddMinutes(2)
 
-    if ($window.Count -ge 5) {
-        Write-Output "ALERT: $($window.Count) failed logons detected within 2 minutes"
+    $count = @(
+        $events | Where-Object {
+            $_.TimeCreated -ge $windowStart -and
+            $_.TimeCreated -le $windowEnd
+        }
+    ).Count
+
+    if ($count -ge 5) {
+        Write-Output "ALERT: $count failed logons detected within 2 minutes"
         $alertFound = $true
         break
     }
@@ -62,15 +66,19 @@ if (-not $alertFound) {
 }
 ```
 
-The output intentionally avoids printing usernames, hostnames, or exact timestamps so the validation result can be documented without exposing unnecessary identifiers.
+The output intentionally avoids printing usernames, hostnames, or exact timestamps so validation can be documented without exposing unnecessary identifiers.
 
-## Expected Test Result
+## Validation Result
 
-The controlled lab generated five failed-logon events in approximately two minutes, so the expected result is:
+The controlled lab contained five Event ID 4625 failed-logon events within the configured two-minute threshold.
+
+Observed output:
 
 ```text
 ALERT: 5 failed logons detected within 2 minutes
 ```
+
+**Result:** Detection triggered as expected.
 
 ## Triage Guidance
 
@@ -103,7 +111,7 @@ This mapping represents behavior the rule is designed to detect. A detection mat
 
 ## Next Step
 
-After local validation, this detection will be translated into SIEM-specific correlation logic such as:
+Translate the validated detection into SIEM-specific correlation logic:
 
 - Splunk SPL
 - Microsoft Sentinel KQL
