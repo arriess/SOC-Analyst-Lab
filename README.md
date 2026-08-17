@@ -6,7 +6,7 @@ Hands-on Security Operations Center (SOC) portfolio project focused on **securit
 
 ## Objective
 
-The purpose of this repository is to document practical SOC analyst work using controlled lab environments. Each investigation will include the evidence reviewed, analyst reasoning, detection logic, MITRE ATT&CK mapping where applicable, and recommended response actions.
+The purpose of this repository is to document practical SOC analyst work using controlled lab environments. Each investigation includes the evidence reviewed, analyst reasoning, detection logic, MITRE ATT&CK mapping where applicable, and recommended response actions.
 
 ## Skills Practiced
 
@@ -15,6 +15,8 @@ The purpose of this repository is to document practical SOC analyst work using c
 - Alert triage
 - Incident investigation
 - Threat detection
+- Splunk SPL
+- SIEM alerting
 - Network traffic analysis
 - IOC analysis
 - MITRE ATT&CK mapping
@@ -27,9 +29,13 @@ The purpose of this repository is to document practical SOC analyst work using c
 - [x] Investigate Windows Event ID 4625
 - [x] Identify repeated authentication failures
 - [x] Document triage and analyst findings
-- [x] Add screenshots and evidence
+- [x] Add sanitized screenshots and evidence
 - [x] Create and validate detection logic for repeated failed logins
-- [ ] Expand into SIEM monitoring with Splunk or Microsoft Sentinel
+- [x] Ingest Windows Security logs into Splunk
+- [x] Validate SPL correlation for five failed logons within two minutes
+- [x] Create and trigger a Splunk scheduled alert
+- [ ] Add additional SOC detections
+- [ ] Reproduce selected detections in Microsoft Sentinel/KQL when available
 
 ## Repository Structure
 
@@ -60,23 +66,44 @@ The first investigation analyzed five repeated Windows failed-logon events (Even
 
 ## Detection 001 — Repeated Failed Logons
 
-**Status:** Validated — Local Lab
+**Status:** Validated — PowerShell + Splunk SIEM
 
-A PowerShell-based threshold detection was validated against the controlled Event ID 4625 dataset. The rule triggered when **5 failed logons occurred within a 2-minute window**.
+The detection identifies **5 or more Event ID 4625 failed logons within a 2-minute window**. It was first validated locally with PowerShell and then reproduced end-to-end in Splunk:
+
+```text
+Windows Security Event 4625
+        ↓
+Splunk ingestion
+        ↓
+SPL correlation
+        ↓
+Scheduled alert
+        ↓
+Triggered Alert
+```
+
+The alert was configured as a scheduled Medium-severity detection and successfully appeared in Splunk Triggered Alerts during a controlled validation test.
 
 [`detections/001-repeated-failed-logons.md`](detections/001-repeated-failed-logons.md)
 
 ## Tools
 
-Current / planned tools for this lab:
+Tools used in the current lab:
 
 - Windows Event Viewer
 - Windows Security Logs
-- VirtualBox
-- Wireshark
 - PowerShell / Windows command line
-- Splunk *(planned)*
-- Microsoft Sentinel *(planned)*
+- Splunk Enterprise
+- Splunk Search Processing Language (SPL)
+
+Planned expansion:
+
+- Wireshark
+- Microsoft Sentinel / KQL, when available
+
+## Privacy
+
+Public portfolio evidence is sanitized before publication. Real local usernames, hostnames, account domains, credentials, public IP addresses, and unnecessary identifying information are excluded or redacted.
 
 ## Ethics
 
