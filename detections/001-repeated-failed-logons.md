@@ -2,9 +2,9 @@
 
 ## Status
 
-**Validated — Local Lab**
+**Validated — PowerShell + Splunk SIEM**
 
-This detection was successfully executed against controlled Windows Security log data and triggered when the configured threshold was reached.
+This detection was successfully executed against controlled Windows Security log data, reproduced in Splunk, saved as a scheduled alert, and observed in Splunk Triggered Alerts when the threshold was reached.
 
 ## Detection Objective
 
@@ -14,6 +14,8 @@ Identify a burst of repeated Windows authentication failures that may indicate p
 
 - Windows Security Event Log
 - Event ID: **4625** — failed logon
+- Splunk index: `soc_lab`
+- Portfolio host label: `SOC-LAB-WIN01`
 
 ## Detection Logic
 
@@ -30,7 +32,7 @@ WITHIN 2 minutes
 THEN generate alert
 ```
 
-## Validated PowerShell Logic
+## PowerShell Validation
 
 Run PowerShell with permission to read the Windows Security log.
 
@@ -68,9 +70,7 @@ if (-not $alertFound) {
 
 The output intentionally avoids printing usernames, hostnames, or exact timestamps so validation can be documented without exposing unnecessary identifiers.
 
-## Validation Result
-
-The controlled lab contained five Event ID 4625 failed-logon events within the configured two-minute threshold.
+### PowerShell Validation Result
 
 Observed output:
 
@@ -79,6 +79,60 @@ ALERT: 5 failed logons detected within 2 minutes
 ```
 
 **Result:** Detection triggered as expected.
+
+## Splunk SPL Validation
+
+Windows Security events were ingested into the dedicated `soc_lab` index and the repeated-failure threshold was validated using SPL.
+
+```spl
+index=soc_lab EventCode=4625
+| sort 0 + _time
+| streamstats time_window=2m count as failed_logons
+| where failed_logons>=5
+| head 1
+| table failed_logons
+```
+
+Observed result:
+
+```text
+failed_logons
+5
+```
+
+**Result:** The SPL correlation logic detected the five-event threshold within the two-minute window.
+
+## Splunk Scheduled Alert
+
+The validated search was saved as a Splunk scheduled alert with the following configuration:
+
+| Setting | Value |
+|---|---|
+| Alert name | Repeated Windows Failed Logons |
+| Alert type | Scheduled |
+| Search window | Last 2 minutes |
+| Schedule | Every minute |
+| Trigger condition | Number of Results > 0 |
+| Trigger mode | Once |
+| Throttle | 5 minutes |
+| Severity | Medium |
+| Action | Add to Triggered Alerts |
+
+A fresh controlled set of five failed-authentication events was generated after the alert was enabled. Splunk ingested the events, evaluated the SPL search, and the alert appeared successfully in **Triggered Alerts**.
+
+**End-to-end validation:**
+
+```text
+Windows Event ID 4625
+        ↓
+Splunk ingestion
+        ↓
+SPL threshold correlation
+        ↓
+Scheduled detection
+        ↓
+Triggered Alert
+```
 
 ## Triage Guidance
 
@@ -109,9 +163,10 @@ Severity should be increased when privileged accounts, unknown external sources,
 
 This mapping represents behavior the rule is designed to detect. A detection match alone does not prove malicious activity.
 
+## Privacy
+
+Public documentation intentionally avoids real local usernames, hostnames, account domains, credentials, public IP addresses, and unnecessary exact timestamps.
+
 ## Next Step
 
-Translate the validated detection into SIEM-specific correlation logic:
-
-- Splunk SPL
-- Microsoft Sentinel KQL
+Expand the lab with additional SOC detections and, where available, reproduce selected detections in Microsoft Sentinel using KQL.
