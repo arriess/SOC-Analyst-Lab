@@ -1,41 +1,72 @@
 # SOC Analyst Lab
 
-Hands-on Security Operations Center (SOC) portfolio project focused on **security monitoring, log analysis, alert triage, and incident investigation**.
+Hands-on Security Operations Center (SOC) portfolio project focused on **Windows security monitoring, log analysis, alert triage, detection engineering, and Splunk SIEM investigations**.
 
-> **Status:** In progress — investigations are documented only after they are performed in the lab.
+> **Current status:** 3 detections validated end-to-end in a controlled Windows + Splunk lab.
 
 ## Objective
 
-The purpose of this repository is to document practical SOC analyst work using controlled lab environments. Each investigation includes the evidence reviewed, analyst reasoning, detection logic, MITRE ATT&CK mapping where applicable, and recommended response actions.
+The purpose of this repository is to document practical SOC analyst work using controlled lab environments. The project focuses on generating security telemetry, analyzing Windows events, building SPL detection logic, creating scheduled SIEM alerts, validating alert triggers, documenting analyst reasoning, and publishing sanitized evidence.
 
-## Skills Practiced
+## Current Lab Capabilities
 
-- Security monitoring
-- Windows event log analysis
-- Alert triage
-- Incident investigation
-- Threat detection
-- Splunk SPL
-- SIEM alerting
-- Network traffic analysis
-- IOC analysis
+- Windows Security Event Log analysis
+- Authentication-event investigation
+- Windows process-creation analysis
+- Splunk log ingestion
+- Splunk Search Processing Language (SPL)
+- Per-account event correlation
+- Parent-child process correlation
+- Scheduled SIEM alert creation
+- Alert threshold tuning and throttling
+- Alert triage and false-positive analysis
 - MITRE ATT&CK mapping
-- Security documentation
+- Security documentation and evidence sanitization
+
+## Validated Detections
+
+| Detection | Telemetry | Logic | Severity | Status |
+|---|---|---|---|---|
+| **001 — Repeated Failed Logons** | Event ID 4625 | 5+ failed logons within 2 minutes | Medium | ✅ Validated |
+| **002 — Command Prompt Spawning PowerShell** | Event ID 4688 | `cmd.exe → powershell.exe` process chain | Low | ✅ Validated |
+| **003 — Failed Logons Followed by Success** | Event IDs 4625 + 4624 | 5+ failures followed by a success for the same account within 5 minutes | Medium | ✅ Validated |
+
+Each detection was tested with controlled lab activity, reproduced in Splunk, saved as a scheduled alert, and confirmed in **Triggered Alerts**.
+
+## End-to-End Workflow Practiced
+
+```text
+Controlled Windows activity
+          ↓
+Windows Security telemetry
+          ↓
+Splunk ingestion
+          ↓
+SPL detection / correlation
+          ↓
+Scheduled SIEM alert
+          ↓
+Triggered Alert
+          ↓
+Analyst triage + documentation
+```
 
 ## Lab Roadmap
 
 - [x] Build Windows security logging lab
 - [x] Generate controlled failed-login events
 - [x] Investigate Windows Event ID 4625
-- [x] Identify repeated authentication failures
-- [x] Document triage and analyst findings
-- [x] Add sanitized screenshots and evidence
-- [x] Create and validate detection logic for repeated failed logins
 - [x] Ingest Windows Security logs into Splunk
-- [x] Validate SPL correlation for five failed logons within two minutes
+- [x] Build and validate repeated failed-logon detection
 - [x] Create and trigger a Splunk scheduled alert
-- [ ] Add additional SOC detections
-- [ ] Reproduce selected detections in Microsoft Sentinel/KQL when available
+- [x] Analyze Event ID 4688 process-creation telemetry
+- [x] Detect `cmd.exe → powershell.exe` process chains
+- [x] Correlate failed and successful authentication events by account
+- [x] Validate three Splunk detections end-to-end
+- [x] Add sanitized visual evidence
+- [ ] Add a fourth detection using different Windows telemetry
+- [ ] Add network-traffic analysis with Wireshark
+- [ ] Reproduce selected detections in Microsoft Sentinel / KQL when available
 
 ## Repository Structure
 
@@ -48,19 +79,24 @@ SOC-Analyst-Lab/
 │   └── 001-windows-failed-logins.md
 ├── detections/
 │   ├── README.md
-│   └── 001-repeated-failed-logons.md
+│   ├── 001-repeated-failed-logons.md
+│   ├── 002-cmd-to-powershell.md
+│   └── 003-failed-logons-followed-by-success.md
 ├── sample-logs/
 │   └── README.md
 └── screenshots/
     ├── README.md
-    └── 001-event-4625-overview.jpg
+    ├── 001-event-4625-overview.jpg
+    ├── 002-splunk-triggered-alert.jpg
+    ├── 003-cmd-powershell-triggered-alert.jpg
+    └── 004-failed-logons-followed-by-success-alert.jpg
 ```
 
 ## Investigation 001 — Windows Failed Login Analysis
 
 **Status:** Completed — Controlled Lab Simulation
 
-The first investigation analyzed five repeated Windows failed-logon events (Event ID **4625**) generated in an authorized local lab. The activity was triaged as **Benign / Authorized Security Test**, with evidence, analyst findings, MITRE ATT&CK mapping, and recommended response actions documented in:
+Five repeated Windows failed-logon events (Event ID **4625**) were generated in an authorized local lab and investigated as a SOC analyst scenario. The activity was classified as **Benign / Authorized Security Test**, with evidence, findings, MITRE ATT&CK mapping, and response recommendations documented in:
 
 [`investigations/001-windows-failed-logins.md`](investigations/001-windows-failed-logins.md)
 
@@ -68,46 +104,55 @@ The first investigation analyzed five repeated Windows failed-logon events (Even
 
 **Status:** Validated — PowerShell + Splunk SIEM
 
-The detection identifies **5 or more Event ID 4625 failed logons within a 2-minute window**. It was first validated locally with PowerShell and then reproduced end-to-end in Splunk:
-
-```text
-Windows Security Event 4625
-        ↓
-Splunk ingestion
-        ↓
-SPL correlation
-        ↓
-Scheduled alert
-        ↓
-Triggered Alert
-```
-
-The alert was configured as a scheduled Medium-severity detection and successfully appeared in Splunk Triggered Alerts during a controlled validation test.
+Detects **5 or more Event ID 4625 failed logons within a 2-minute window**. The rule was validated locally and then reproduced as a scheduled Splunk alert.
 
 [`detections/001-repeated-failed-logons.md`](detections/001-repeated-failed-logons.md)
 
-## Tools
+## Detection 002 — Command Prompt Spawning PowerShell
 
-Tools used in the current lab:
+**Status:** Validated — Splunk Scheduled Alert
+
+Detects the Windows process chain:
+
+```text
+cmd.exe → powershell.exe
+```
+
+using Event ID **4688** parent-child process telemetry. This behavior is treated as contextual rather than inherently malicious and is configured with **Low** severity.
+
+[`detections/002-cmd-to-powershell.md`](detections/002-cmd-to-powershell.md)
+
+## Detection 003 — Repeated Failed Logons Followed by Success
+
+**Status:** Validated — Splunk Scheduled Alert
+
+Correlates Event IDs **4625** and **4624** to identify **5 or more failed logons followed by a successful logon for the same account within 5 minutes**. The alert is configured with **Medium** severity and requires analyst triage because legitimate password mistakes can produce the same pattern.
+
+[`detections/003-failed-logons-followed-by-success.md`](detections/003-failed-logons-followed-by-success.md)
+
+## Tools Used
 
 - Windows Event Viewer
 - Windows Security Logs
-- PowerShell / Windows command line
+- PowerShell
+- Windows Command Prompt
 - Splunk Enterprise
 - Splunk Search Processing Language (SPL)
+- MITRE ATT&CK
+- GitHub for portfolio documentation
 
-Planned expansion:
+### Planned Expansion
 
 - Wireshark
 - Microsoft Sentinel / KQL, when available
 
 ## Privacy
 
-Public portfolio evidence is sanitized before publication. Real local usernames, hostnames, account domains, credentials, public IP addresses, and unnecessary identifying information are excluded or redacted.
+Public portfolio evidence is sanitized before publication. Real local usernames, hostnames, account domains, credentials, public IP addresses, unnecessary exact timestamps, and other identifying information are excluded or redacted.
 
 ## Ethics
 
-All activity documented in this repository is performed in systems and lab environments that I own or am explicitly authorized to test.
+All activity documented in this repository is performed on systems and lab environments that I own or am explicitly authorized to test.
 
 ## Author
 
