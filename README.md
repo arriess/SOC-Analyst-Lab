@@ -2,7 +2,7 @@
 
 Hands-on Security Operations Center (SOC) portfolio project focused on **Windows security monitoring, log analysis, alert triage, detection engineering, and Splunk SIEM investigations**.
 
-> **Current status:** 3 detections validated end-to-end in a controlled Windows + Splunk lab.
+> **Current status:** 4 detections validated end-to-end in a controlled Windows + Splunk lab.
 
 ## Objective
 
@@ -13,6 +13,7 @@ The purpose of this repository is to document practical SOC analyst work using c
 - Windows Security Event Log analysis
 - Authentication-event investigation
 - Windows process-creation analysis
+- Windows account-management monitoring
 - Splunk log ingestion
 - Splunk Search Processing Language (SPL)
 - Per-account event correlation
@@ -30,6 +31,7 @@ The purpose of this repository is to document practical SOC analyst work using c
 | **001 — Repeated Failed Logons** | Event ID 4625 | 5+ failed logons within 2 minutes | Medium | ✅ Validated |
 | **002 — Command Prompt Spawning PowerShell** | Event ID 4688 | `cmd.exe → powershell.exe` process chain | Low | ✅ Validated |
 | **003 — Failed Logons Followed by Success** | Event IDs 4625 + 4624 | 5+ failures followed by a success for the same account within 5 minutes | Medium | ✅ Validated |
+| **004 — New Local User Account Created** | Event ID 4720 | New user account creation detected | Medium | ✅ Validated |
 
 Each detection was tested with controlled lab activity, reproduced in Splunk, saved as a scheduled alert, and confirmed in **Triggered Alerts**.
 
@@ -62,9 +64,10 @@ Analyst triage + documentation
 - [x] Analyze Event ID 4688 process-creation telemetry
 - [x] Detect `cmd.exe → powershell.exe` process chains
 - [x] Correlate failed and successful authentication events by account
-- [x] Validate three Splunk detections end-to-end
+- [x] Detect Windows user-account creation with Event ID 4720
+- [x] Validate four Splunk detections end-to-end
 - [x] Add sanitized visual evidence
-- [ ] Add a fourth detection using different Windows telemetry
+- [ ] Add a privilege-change detection
 - [ ] Add network-traffic analysis with Wireshark
 - [ ] Reproduce selected detections in Microsoft Sentinel / KQL when available
 
@@ -81,7 +84,8 @@ SOC-Analyst-Lab/
 │   ├── README.md
 │   ├── 001-repeated-failed-logons.md
 │   ├── 002-cmd-to-powershell.md
-│   └── 003-failed-logons-followed-by-success.md
+│   ├── 003-failed-logons-followed-by-success.md
+│   └── 004-new-local-user-account.md
 ├── sample-logs/
 │   └── README.md
 └── screenshots/
@@ -89,7 +93,8 @@ SOC-Analyst-Lab/
     ├── 001-event-4625-overview.jpg
     ├── 002-splunk-triggered-alert.jpg
     ├── 003-cmd-powershell-triggered-alert.jpg
-    └── 004-failed-logons-followed-by-success-alert.jpg
+    ├── 004-failed-logons-followed-by-success-alert.jpg
+    └── 005-new-local-user-account-alert.jpg
 ```
 
 ## Investigation 001 — Windows Failed Login Analysis
@@ -129,6 +134,14 @@ using Event ID **4688** parent-child process telemetry. This behavior is treated
 Correlates Event IDs **4625** and **4624** to identify **5 or more failed logons followed by a successful logon for the same account within 5 minutes**. The alert is configured with **Medium** severity and requires analyst triage because legitimate password mistakes can produce the same pattern.
 
 [`detections/003-failed-logons-followed-by-success.md`](detections/003-failed-logons-followed-by-success.md)
+
+## Detection 004 — New Local User Account Created
+
+**Status:** Validated — Splunk Scheduled Alert
+
+Detects Windows Event ID **4720** when a new user account is created. The alert is configured with **Medium** severity because account creation is legitimate in many administrative workflows but can be security-relevant when unexpected or followed by privilege changes.
+
+[`detections/004-new-local-user-account.md`](detections/004-new-local-user-account.md)
 
 ## Tools Used
 
