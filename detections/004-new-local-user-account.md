@@ -57,6 +57,12 @@ The validated query was saved as a scheduled Splunk alert with the following con
 
 A fresh controlled account-creation event was generated after the alert was enabled. Splunk ingested Event ID 4720, evaluated the detection, and the alert appeared successfully in **Triggered Alerts** with **Medium** severity.
 
+## Visual Evidence
+
+The sanitized screenshot below shows Detection 004 appearing in Splunk **Triggered Alerts** with **Medium** severity. The exact trigger timestamp was redacted before publication.
+
+![Detection 004 Splunk Triggered Alert](../screenshots/005-new-local-user-account-alert.jpg)
+
 ## End-to-End Validation
 
 ```text
@@ -110,4 +116,4 @@ Public documentation intentionally excludes or redacts real account names, hostn
 
 ## Next Step
 
-Add sanitized visual evidence for the triggered alert and continue expanding the lab with privilege-change or other Windows security detections.
+Continue expanding the lab with privilege-change or other Windows security detections.
