@@ -120,6 +120,12 @@ The validated search was saved as a Splunk scheduled alert with the following co
 
 A fresh controlled set of five failed-authentication events was generated after the alert was enabled. Splunk ingested the events, evaluated the SPL search, and the alert appeared successfully in **Triggered Alerts**.
 
+### Visual Evidence
+
+The sanitized screenshot below shows the scheduled detection appearing in Splunk **Triggered Alerts**. The exact trigger timestamp was redacted before publication.
+
+![Splunk Triggered Alert evidence](../screenshots/002-splunk-triggered-alert.jpg)
+
 **End-to-end validation:**
 
 ```text
