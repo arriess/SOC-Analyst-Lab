@@ -59,6 +59,12 @@ The validated query was saved as a scheduled Splunk alert with the following con
 
 A fresh controlled group-membership addition was generated after the alert was enabled. Splunk ingested Event ID 4732, evaluated the detection, and the alert appeared successfully in **Triggered Alerts** with **High** severity.
 
+## Visual Evidence
+
+The sanitized screenshot below shows Detection 005 appearing in Splunk **Triggered Alerts** with **High** severity. The exact trigger timestamp was redacted before publication.
+
+![Detection 005 Splunk Triggered Alert](../screenshots/006-local-admin-group-addition-alert.jpg)
+
 ## End-to-End Validation
 
 ```text
@@ -102,12 +108,11 @@ High severity is appropriate because the activity grants local administrative pr
 
 ## MITRE ATT&CK
 
-This behavior can be relevant to **Account Manipulation / Additional Cloud Roles or Groups** concepts and privilege-escalation workflows. The event itself does not prove malicious activity and should always be interpreted with surrounding context.
+- **T1098.007 — Account Manipulation: Additional Local or Domain Groups**
+- Tactics: **Persistence, Privilege Escalation**
+
+MITRE ATT&CK specifically notes that accounts may be added to the local Administrators group on Windows to maintain elevated privileges. The mapping describes the behavior represented by this telemetry and does not prove malicious activity.
 
 ## Privacy
 
 Public documentation intentionally excludes or redacts real account names, hostnames, account domains, credentials, public IP addresses, exact trigger timestamps, and other unnecessary identifying information.
-
-## Next Step
-
-Add sanitized visual evidence for the triggered alert and update the project index to include Detection 005.
