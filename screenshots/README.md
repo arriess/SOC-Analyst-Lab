@@ -9,6 +9,7 @@ This directory contains **sanitized visual evidence** from completed SOC lab inv
 - `003-cmd-powershell-triggered-alert.jpg` — Detection 002 triggered alert
 - `004-failed-logons-followed-by-success-alert.jpg` — Detection 003 triggered alert
 - `005-new-local-user-account-alert.jpg` — Detection 004 triggered alert
+- `006-local-admin-group-addition-alert.jpg` — Detection 005 triggered alert
 
 ## Privacy Rule
 
