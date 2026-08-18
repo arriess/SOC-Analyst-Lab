@@ -10,6 +10,7 @@ This directory contains detection logic that has been **tested against controlle
 | 002 | [Command Prompt Spawning PowerShell](002-cmd-to-powershell.md) | Event ID 4688 | Low | ✅ Validated |
 | 003 | [Failed Logons Followed by Success](003-failed-logons-followed-by-success.md) | Event IDs 4625 + 4624 | Medium | ✅ Validated |
 | 004 | [New Local User Account Created](004-new-local-user-account.md) | Event ID 4720 | Medium | ✅ Validated |
+| 005 | [User Added to Local Administrators Group](005-local-admin-group-addition.md) | Event ID 4732 | High | ✅ Validated |
 
 ## Validation Standard
 
