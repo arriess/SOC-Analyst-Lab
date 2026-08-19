@@ -10,7 +10,8 @@ This directory contains **sanitized visual evidence** from completed SOC lab inv
 - `004-failed-logons-followed-by-success-alert.jpg` — Detection 003 triggered alert
 - `005-new-local-user-account-alert.jpg` — Detection 004 triggered alert
 - `006-local-admin-group-addition-alert.jpg` — Detection 005 triggered alert
+- `007-wireshark-dns-example-analysis-sanitized.jpg` — Investigation 002 sanitized Wireshark DNS query/response evidence
 
 ## Privacy Rule
 
-Before publication, screenshots must exclude or redact real usernames, hostnames, account domains, credentials, public IP addresses, unnecessary exact timestamps, and unrelated system information.
+Before publication, screenshots must exclude or redact real usernames, hostnames, account domains, credentials, private/public IP addresses when unnecessary, MAC addresses, unnecessary exact timestamps, and unrelated system information.
