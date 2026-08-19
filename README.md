@@ -1,12 +1,12 @@
 # SOC Analyst Lab
 
-Hands-on Security Operations Center (SOC) portfolio project focused on **Windows security monitoring, log analysis, alert triage, detection engineering, and Splunk SIEM investigations**.
+Hands-on Security Operations Center (SOC) portfolio project focused on **Windows security monitoring, log analysis, alert triage, detection engineering, Splunk SIEM investigations, and network traffic analysis**.
 
-> **Current status:** 5 detections validated end-to-end in a controlled Windows + Splunk lab.
+> **Current status:** Core portfolio lab complete — 5 Splunk detections validated end-to-end and 2 analyst investigations documented in a controlled environment.
 
 ## Objective
 
-The purpose of this repository is to document practical SOC analyst work using controlled lab environments. The project focuses on generating security telemetry, analyzing Windows events, building SPL detection logic, creating scheduled SIEM alerts, validating alert triggers, documenting analyst reasoning, and publishing sanitized evidence.
+The purpose of this repository is to document practical SOC analyst work using controlled lab environments. The project focuses on generating security telemetry, analyzing Windows events and network traffic, building SPL detection logic, creating scheduled SIEM alerts, validating alert triggers, documenting analyst reasoning, and publishing sanitized evidence.
 
 ## Current Lab Capabilities
 
@@ -22,7 +22,9 @@ The purpose of this repository is to document practical SOC analyst work using c
 - Scheduled SIEM alert creation
 - Alert threshold tuning and throttling
 - Alert triage and false-positive analysis
-- MITRE ATT&CK mapping
+- Wireshark packet capture and DNS traffic analysis
+- DNS query/response filtering
+- MITRE ATT&CK mapping where behavior is relevant
 - Security documentation and evidence sanitization
 
 ## Validated Detections
@@ -37,22 +39,29 @@ The purpose of this repository is to document practical SOC analyst work using c
 
 Each detection was tested with controlled lab activity, reproduced in Splunk, saved as a scheduled alert, and confirmed in **Triggered Alerts**.
 
+## Analyst Investigations
+
+| Investigation | Data Source | Focus | Classification | Status |
+|---|---|---|---|---|
+| **001 — Windows Failed Login Analysis** | Windows Security Logs | Repeated Event ID 4625 activity | Benign / Authorized Test | ✅ Completed |
+| **002 — DNS Traffic Analysis with Wireshark** | Network packets / DNS | A and AAAA query-response analysis for `example.com` | Benign / Authorized Test | ✅ Completed |
+
 ## End-to-End Workflow Practiced
 
 ```text
-Controlled Windows activity
-          ↓
-Windows Security telemetry
-          ↓
-Splunk ingestion
-          ↓
-SPL detection / correlation
-          ↓
-Scheduled SIEM alert
-          ↓
-Triggered Alert
-          ↓
-Analyst triage + documentation
+Controlled activity
+       ↓
+Windows / network telemetry
+       ↓
+Splunk or Wireshark analysis
+       ↓
+Detection / filtering / correlation
+       ↓
+Alert or analyst finding
+       ↓
+Triage + documentation
+       ↓
+Sanitized portfolio evidence
 ```
 
 ## Lab Roadmap
@@ -69,9 +78,11 @@ Analyst triage + documentation
 - [x] Detect Windows user-account creation with Event ID 4720
 - [x] Detect additions to the local Administrators group with Event ID 4732
 - [x] Validate five Splunk detections end-to-end
-- [x] Add sanitized visual evidence
-- [ ] Add network-traffic analysis with Wireshark
-- [ ] Reproduce selected detections in Microsoft Sentinel / KQL when available
+- [x] Add sanitized Splunk visual evidence
+- [x] Capture and analyze DNS traffic with Wireshark
+- [x] Document a network-traffic investigation with sanitized evidence
+- [x] Complete the core Windows + Splunk + Wireshark portfolio lab
+- [ ] Future expansion: reproduce selected detections in Microsoft Sentinel / KQL when available
 
 ## Repository Structure
 
@@ -81,7 +92,8 @@ SOC-Analyst-Lab/
 ├── docs/
 │   └── lab-setup.md
 ├── investigations/
-│   └── 001-windows-failed-logins.md
+│   ├── 001-windows-failed-logins.md
+│   └── 002-dns-traffic-analysis.md
 ├── detections/
 │   ├── README.md
 │   ├── 001-repeated-failed-logons.md
@@ -98,7 +110,8 @@ SOC-Analyst-Lab/
     ├── 003-cmd-powershell-triggered-alert.jpg
     ├── 004-failed-logons-followed-by-success-alert.jpg
     ├── 005-new-local-user-account-alert.jpg
-    └── 006-local-admin-group-addition-alert.jpg
+    ├── 006-local-admin-group-addition-alert.jpg
+    └── 007-wireshark-dns-example-analysis-sanitized.jpg
 ```
 
 ## Investigation 001 — Windows Failed Login Analysis
@@ -108,6 +121,14 @@ SOC-Analyst-Lab/
 Five repeated Windows failed-logon events (Event ID **4625**) were generated in an authorized local lab and investigated as a SOC analyst scenario. The activity was classified as **Benign / Authorized Security Test**, with evidence, findings, MITRE ATT&CK mapping, and response recommendations documented in:
 
 [`investigations/001-windows-failed-logins.md`](investigations/001-windows-failed-logins.md)
+
+## Investigation 002 — DNS Traffic Analysis with Wireshark
+
+**Status:** Completed — Controlled / Authorized Network Analysis
+
+A controlled DNS lookup for `example.com` was captured and isolated in Wireshark. The investigation analyzed **A and AAAA DNS queries and responses**, used a targeted display filter, classified the traffic as benign, and published sanitized evidence without exposing local identifiers.
+
+[`investigations/002-dns-traffic-analysis.md`](investigations/002-dns-traffic-analysis.md)
 
 ## Detection 001 — Repeated Failed Logons
 
@@ -163,21 +184,23 @@ Detects Windows Event ID **4732** when an account is added to the built-in local
 - Windows Command Prompt
 - Splunk Enterprise
 - Splunk Search Processing Language (SPL)
+- Wireshark
+- DNS traffic analysis
 - MITRE ATT&CK
 - GitHub for portfolio documentation
 
-### Planned Expansion
+### Future Expansion
 
-- Wireshark
 - Microsoft Sentinel / KQL, when available
+- Additional network and endpoint telemetry sources
 
 ## Privacy
 
-Public portfolio evidence is sanitized before publication. Real local usernames, hostnames, account domains, credentials, public IP addresses, unnecessary exact timestamps, and other identifying information are excluded or redacted.
+Public portfolio evidence is sanitized before publication. Real local usernames, hostnames, account domains, credentials, private/public IP addresses when unnecessary, MAC addresses, unnecessary exact timestamps, and other identifying information are excluded or redacted.
 
 ## Ethics
 
-All activity documented in this repository is performed on systems and lab environments that I own or am explicitly authorized to test.
+All activity documented in this repository is performed on systems and lab environments that I own or am explicitly authorized to test. Network analysis is limited to controlled traffic generated for the lab; third-party traffic is not intentionally targeted or intercepted.
 
 ## Author
 
